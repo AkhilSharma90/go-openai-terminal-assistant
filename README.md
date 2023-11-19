@@ -7,10 +7,14 @@ This is an assistant for your terminal, using [OpenAI ChatGPT](https://chat.open
 
 ## How to get started?
 
-Create a .config folder - mkdir ~/.config
+Create a .config folder - 
+```mkdir ~/.config
 cd ~/.config
-create a config file here - terminal-assistant.json
+```
+
+create a config file here - ```terminal-assistant.json```
 and mention the following details -
+
 ```
 {
     "openai_key": "REPLACE WITH YOUR OPEN AI KEY",      
