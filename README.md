@@ -11,7 +11,7 @@ Create a .config folder - mkdir ~/.config
 cd ~/.config
 create a config file here - terminal-assistant.json
 and mention the following details -
-
+```
 {
     "openai_key": "REPLACE WITH YOUR OPEN AI KEY",      
     "openai_model": "gpt-3.5-turbo",   
@@ -21,3 +21,4 @@ and mention the following details -
     "user_default_prompt_mode": "exec",
     "user_preferences": ""             
   }
+```
