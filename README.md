@@ -8,7 +8,8 @@ This is an assistant for your terminal, using [OpenAI ChatGPT](https://chat.open
 ## How to get started?
 
 Create a .config folder - 
-```mkdir ~/.config
+```
+mkdir ~/.config
 cd ~/.config
 ```
 
