@@ -7,16 +7,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestSystem is a test function that runs subtests for the system package.
+// It includes tests for GetOperatingSystem and Analyse functions.
 func TestSystem(t *testing.T) {
 	t.Run("GetOperatingSystem", testGetOperatingSystem)
 	t.Run("Analyse", testAnalyse)
 }
 
+// testGetOperatingSystem tests the GetOperatingSystem function.
 func testGetOperatingSystem(t *testing.T) {
 	operatingSystem := GetOperatingSystem()
 	assert.NotEqual(t, UnknownOperatingSystem, operatingSystem, "The operating system should not be unknown.")
 }
 
+// testAnalyse is a unit test function that tests the Analyse function.
 func testAnalyse(t *testing.T) {
 	analysis := Analyse()
 

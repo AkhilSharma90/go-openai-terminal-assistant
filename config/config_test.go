@@ -14,10 +14,12 @@ import (
 )
 
 func TestConfig(t *testing.T) {
+	// TestConfig is a test function that runs subtests for NewConfig and WriteConfig.
 	t.Run("NewConfig", testNewConfig)
 	t.Run("WriteConfig", testWriteConfig)
 }
 
+// setupViper initializes the Viper configuration for testing purposes.
 func setupViper(t *testing.T) {
 	t.Helper()
 	system := system.Analyse()
@@ -35,11 +37,15 @@ func setupViper(t *testing.T) {
 	require.NoError(t, viper.SafeWriteConfigAs("/tmp/terminal-assistant.json"))
 }
 
+// cleanup is a helper function used in testing to remove the "/tmp/terminal-assistant.json" file.
 func cleanup(t *testing.T) {
 	t.Helper()
 	require.NoError(t, os.Remove("/tmp/terminal-assistant.json"))
 }
 
+// testNewConfig is a unit test function that tests the NewConfig function.
+// It sets up the necessary configuration for testing, creates a new config,
+// and asserts that the values of the config match the expected values.
 func testNewConfig(t *testing.T) {
 	setupViper(t)
 	defer cleanup(t)
@@ -58,6 +64,9 @@ func testNewConfig(t *testing.T) {
 	assert.NotNil(t, cfg.GetSystemConfig())
 }
 
+// testWriteConfig is a unit test function that tests the behavior of the WriteConfig function.
+// It sets up the necessary configuration, writes a new configuration with test values,
+// and then asserts that the written configuration matches the expected values.
 func testWriteConfig(t *testing.T) {
 	setupViper(t)
 	defer cleanup(t)

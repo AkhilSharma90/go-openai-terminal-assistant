@@ -11,14 +11,20 @@ import (
 )
 
 func main() {
+	// Seed the random number generator with the current time
 	rand.Seed(time.Now().UnixNano())
 
+	// Create a new UI input
 	input, err := ui.NewUIInput()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if _, err := tea.NewProgram(ui.NewUi(input)).Run(); err != nil {
+	// Create a new UI with the input
+	ui := ui.NewUi(input)
+
+	// Run the tea program with the UI
+	if _, err := tea.NewProgram(ui).Run(); err != nil {
 		log.Fatal(err)
 	}
 }

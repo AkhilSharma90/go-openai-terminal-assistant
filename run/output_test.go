@@ -14,6 +14,9 @@ func TestRunOutput(t *testing.T) {
 }
 
 func testHasError(t *testing.T) {
+	// testHasError tests the HasError method of the RunOutput.
+	// It verifies that the method correctly determines whether the RunOutput has an error or not.
+
 	err := errors.New("test error")
 	runOutputWithError := NewRunOutput(err, "Error occurred", "Success")
 	runOutputWithoutError := NewRunOutput(nil, "Error occurred", "Success")
@@ -22,6 +25,7 @@ func testHasError(t *testing.T) {
 	assert.False(t, runOutputWithoutError.HasError(), "RunOutput should not have an error.")
 }
 
+// testGetErrorMessage is a unit test function that tests the GetErrorMessage method of the RunOutput.
 func testGetErrorMessage(t *testing.T) {
 	err := errors.New("test error")
 	runOutput := NewRunOutput(err, "Error occurred", "Success")
@@ -32,6 +36,7 @@ func testGetErrorMessage(t *testing.T) {
 	assert.Equal(t, expectedErrorMessage, actualErrorMessage, "The error messages should be the same.")
 }
 
+// testGetSuccessMessage is a unit test function that tests the GetSuccessMessage method of the RunOutput.
 func testGetSuccessMessage(t *testing.T) {
 	runOutput := NewRunOutput(nil, "Error occurred", "Success")
 

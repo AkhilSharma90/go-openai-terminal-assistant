@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// Colors used for rendering different types of content.
 const (
 	exec_color    = "#ffa657"
 	config_color  = "#ffffff"
@@ -15,6 +16,7 @@ const (
 	success_color = "#46b946"
 )
 
+// Renderer is a struct that represents a renderer for different types of content.
 type Renderer struct {
 	contentRenderer *glamour.TermRenderer
 	successRenderer lipgloss.Style
@@ -23,12 +25,15 @@ type Renderer struct {
 	helpRenderer    lipgloss.Style
 }
 
+// NewRenderer is a function that creates a new Renderer instance.
 func NewRenderer(options ...glamour.TermRendererOption) *Renderer {
+	// Create a new terminal renderer with the provided options.
 	contentRenderer, err := glamour.NewTermRenderer(options...)
 	if err != nil {
 		return nil
 	}
 
+	// Create new styles for rendering success, warning, error, and help messages.
 	successRenderer := lipgloss.NewStyle().Foreground(lipgloss.Color(success_color))
 	warningRenderer := lipgloss.NewStyle().Foreground(lipgloss.Color(warning_color))
 	errorRenderer := lipgloss.NewStyle().Foreground(lipgloss.Color(error_color))
@@ -43,28 +48,34 @@ func NewRenderer(options ...glamour.TermRendererOption) *Renderer {
 	}
 }
 
+// RenderContent is a method on the Renderer struct that renders general content.
 func (r *Renderer) RenderContent(in string) string {
 	out, _ := r.contentRenderer.Render(in)
 
 	return out
 }
 
+// Renders a success message.
 func (r *Renderer) RenderSuccess(in string) string {
 	return r.successRenderer.Render(in)
 }
 
+// Renders a warning message.
 func (r *Renderer) RenderWarning(in string) string {
 	return r.warningRenderer.Render(in)
 }
 
+// Renders an error message.
 func (r *Renderer) RenderError(in string) string {
 	return r.errorRenderer.Render(in)
 }
 
+// Renders a help message.
 func (r *Renderer) RenderHelp(in string) string {
 	return r.helpRenderer.Render(in)
 }
 
+// RenderConfigMessage is a method on the Renderer struct that renders a configuration message.
 func (r *Renderer) RenderConfigMessage() string {
 	welcome := "Welcome! 👋  \n\n"
 	welcome += "I cannot find a configuration file, please enter an `OpenAI API key` "
@@ -73,6 +84,7 @@ func (r *Renderer) RenderConfigMessage() string {
 	return welcome
 }
 
+// RenderHelpMessage is a method on the Renderer struct that renders a help message.
 func (r *Renderer) RenderHelpMessage() string {
 	help := "**Help**\n"
 	help += "- `↑`/`↓` : navigate in history\n"

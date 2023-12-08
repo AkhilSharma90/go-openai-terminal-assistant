@@ -12,11 +12,13 @@ func TestUISpinner(t *testing.T) {
 	t.Run("View", testSpinnerView)
 }
 
+// testNewSpinner tests the NewSpinner function.
 func testNewSpinner(t *testing.T) {
 	s := NewSpinner()
 	assert.NotNil(t, s, "Spinner should not be nil.")
 }
 
+// testSpinnerView tests the View method of the Spinner struct.
 func testSpinnerView(t *testing.T) {
 	s := NewSpinner()
 	view := s.View()

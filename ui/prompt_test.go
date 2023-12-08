@@ -15,6 +15,7 @@ func TestUIPrompt(t *testing.T) {
 }
 
 func testPrompt(t *testing.T) {
+	// testCases is a slice of test cases for different prompt modes and initial values.
 	testCases := []struct {
 		name         string
 		mode         PromptMode
@@ -25,6 +26,7 @@ func testPrompt(t *testing.T) {
 		{"Chat", ChatPromptMode, ""},
 	}
 
+	// Iterate over each test case and run subtests.
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			p := NewPrompt(tc.mode)
@@ -34,6 +36,8 @@ func testPrompt(t *testing.T) {
 	}
 }
 
+// testPromptStyle tests the prompt style for different prompt modes.
+// It verifies that the prompt style is not nil for each mode.
 func testPromptStyle(t *testing.T) {
 	testCases := []struct {
 		name      string
@@ -53,6 +57,8 @@ func testPromptStyle(t *testing.T) {
 	}
 }
 
+// testPromptIcon tests the iconFunc function for different PromptModes.
+// It ensures that the prompt icon is not empty for each mode.
 func testPromptIcon(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -72,6 +78,8 @@ func testPromptIcon(t *testing.T) {
 	}
 }
 
+// testPromptPlaceholder tests the placeholderFunc for different PromptModes.
+// It verifies that the prompt placeholder is not empty.
 func testPromptPlaceholder(t *testing.T) {
 	testCases := []struct {
 		name            string
