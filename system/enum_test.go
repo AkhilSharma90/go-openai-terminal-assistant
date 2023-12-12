@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestOperatingSystem is a unit test for the OperatingSystem function.
 func TestOperatingSystem(t *testing.T) {
 	t.Run("String", testOperatingSystemString)
 }

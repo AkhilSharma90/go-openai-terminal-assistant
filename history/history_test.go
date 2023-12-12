@@ -7,6 +7,7 @@ import (
 )
 
 func TestHistory(t *testing.T) {
+	// TestNewHistory tests the NewHistory function.
 	t.Run("NewHistory", func(t *testing.T) {
 		h := NewHistory()
 		assert.NotNil(t, h)
@@ -14,6 +15,7 @@ func TestHistory(t *testing.T) {
 		assert.Equal(t, 0, h.GetCursor())
 	})
 
+	// TestReset tests the Reset function.
 	t.Run("Reset", func(t *testing.T) {
 		h := NewHistory()
 		h.Add("input1").Add("input2")
@@ -22,12 +24,14 @@ func TestHistory(t *testing.T) {
 		assert.Equal(t, 0, h.GetCursor())
 	})
 
+	// TestAdd tests the Add function.
 	t.Run("Add", func(t *testing.T) {
 		h := NewHistory()
 		h.Add("input1").Add("input2")
 		assert.Equal(t, 2, len(h.GetAll()))
 	})
 
+	// TestGetAll tests the GetAll function.
 	t.Run("GetAll", func(t *testing.T) {
 		h := NewHistory()
 		h.Add("input1").Add("input2")
@@ -37,6 +41,7 @@ func TestHistory(t *testing.T) {
 		assert.Equal(t, "input2", all[1])
 	})
 
+	// TestGetPrevious tests the GetPrevious function.
 	t.Run("GetPrevious", func(t *testing.T) {
 		h := NewHistory()
 		h.Add("input1").Add("input2")
@@ -48,6 +53,7 @@ func TestHistory(t *testing.T) {
 		assert.Equal(t, "input1", *prev)
 	})
 
+	// TestGetNext tests the GetNext function.
 	t.Run("GetNext", func(t *testing.T) {
 		h := NewHistory()
 		h.Add("input1").Add("input2")
@@ -57,6 +63,7 @@ func TestHistory(t *testing.T) {
 		assert.Equal(t, "input2", *next)
 	})
 
+	// TestGetOutOfBounds tests the GetOutOfBounds function.
 	t.Run("GetOutOfBounds", func(t *testing.T) {
 		h := NewHistory()
 		h.Add("input1").Add("input2")
