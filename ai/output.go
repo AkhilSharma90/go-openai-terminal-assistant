@@ -1,11 +1,16 @@
 package ai
 
+//COMPLETE
+
 // EngineExecOutput represents the output of an AI engine execution.
 type EngineExecOutput struct {
 	Command     string `json:"cmd"`  // Command executed by the AI engine
 	Explanation string `json:"exp"`  // Explanation of the command
 	Executable  bool   `json:"exec"` // Indicates if the command is executable.
 }
+
+//eo being accepted in these methods below is engine exec output
+//while co is chat output
 
 // GetCommand returns the command executed by the AI engine.
 func (eo EngineExecOutput) GetCommand() string {

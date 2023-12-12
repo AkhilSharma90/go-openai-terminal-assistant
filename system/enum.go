@@ -1,5 +1,8 @@
 package system
 
+//COMPLETE
+//file deals with multiple operating systems
+
 type OperatingSystem int
 
 // These are the constants representing different operating systems.
