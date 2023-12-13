@@ -2,6 +2,8 @@ package run
 
 import "fmt"
 
+//File has structs and helper functions to show the output after running the 
+
 // RunOutput struct holds the error, error message and success message of a run
 type RunOutput struct {
 	error          error  // error object if any error occurred during the run

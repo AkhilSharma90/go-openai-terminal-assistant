@@ -19,6 +19,8 @@ import (
 
 const noexec = "[noexec]"
 
+//creating the main engine here for ai, the struct has fields for mode, config etc.
+
 type Engine struct {
 	mode         EngineMode                     // The mode of the engine either ExecEngineMode or ChatEngineMode
 	config       *config.Config                 // The configuration settings for the engine
@@ -32,6 +34,7 @@ type Engine struct {
 
 // NewEngine creates a new instance of the Engine struct.
 // It takes the mode (EngineMode) and config (*config.Config) as parameters.
+//and returns an instance of type Engine struct
 func NewEngine(mode EngineMode, config *config.Config) (*Engine, error) {
 	var client *openai.Client
 
@@ -76,6 +79,8 @@ func NewEngine(mode EngineMode, config *config.Config) (*Engine, error) {
 		running:      false,
 	}, nil
 }
+
+//Four helper functions below to get values set for the engine
 
 // SetMode sets the mode of the Engine.
 func (e *Engine) SetMode(mode EngineMode) *Engine {
