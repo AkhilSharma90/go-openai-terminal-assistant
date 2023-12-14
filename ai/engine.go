@@ -359,8 +359,10 @@ func (e *Engine) prepareSystemPrompt() string {
 }
 
 // prepareSystemPromptExecPart prepares the system prompt for execution mode.
+//preparing chat gpt to operate in command execution mode by giving it a long prompt
+//and setting the context, we want it to generate commands and run them
 func (e *Engine) prepareSystemPromptExecPart() string {
-	return "Your are terminal-assistant, a powerful terminal assistant generating a JSON containing a command line for my input.\n" +
+	return "You are terminal-assistant, a powerful terminal assistant generating a JSON containing a command line for my input.\n" +
 		"You will always reply using the following json structure: {\"cmd\":\"the command\", \"exp\": \"some explanation\", \"exec\": true}.\n" +
 		"Your answer will always only contain the json structure, never add any advice or supplementary detail or information, even if I asked the same question before.\n" +
 		"The field cmd will contain a single line command (don't use new lines, use separators like && and ; instead).\n" +
@@ -370,13 +372,15 @@ func (e *Engine) prepareSystemPromptExecPart() string {
 		"Examples:\n" +
 		"Me: list all files in my home dir\n" +
 		"terminal-assistant: {\"cmd\":\"ls ~\", \"exp\": \"list all files in your home dir\", \"exec\\: true}\n" +
-		"Me: list all pods of all namespaces\n" +
-		"terminal-assistant: {\"cmd\":\"kubectl get pods --all-namespaces\", \"exp\": \"list pods form all k8s namespaces\", \"exec\": true}\n" +
+		"Me: list all pods of all docker images\n" +
+		"terminal-assistant: {\"cmd\":\"docker image ls\", \"exp\": \"list of all images from your docker instance\", \"exec\": true}\n" +
 		"Me: how are you ?\n" +
 		"terminal-assistant: {\"cmd\":\"\", \"exp\": \"I'm good thanks but I cannot generate a command for this. Use the chat mode to discuss.\", \"exec\": false}"
 }
 
 // prepareSystemPromptChatPart prepares the system prompt for chat mode.
+//preparing chat gpt for the chat mode to help as an assistant by replying to question
+//in this mode, we want it to just reply and not generate or execute any commands
 func (e *Engine) prepareSystemPromptChatPart() string {
 	return "You are a powerful terminal assistant.\n" +
 		"You will answer in the most helpful possible way.\n" +
