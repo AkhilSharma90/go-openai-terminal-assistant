@@ -38,6 +38,7 @@ type UiDimensions struct {
 }
 
 // UiComponents is a struct that represents the components of the user interface.
+//there are three components we will work with and they each have their separate files
 type UiComponents struct {
 	prompt   *Prompt   // The prompt of the user interface.
 	renderer *Renderer // The renderer of the user interface.
@@ -46,17 +47,18 @@ type UiComponents struct {
 
 // Ui is a struct that represents the user interface.
 type Ui struct {
-	state      UiState          // The state of the user interface.
-	dimensions UiDimensions     // The dimensions of the user interface.
-	components UiComponents     // The components of the user interface.
-	config     *config.Config   // The configuration of the program.
-	engine     *ai.Engine       // The AI engine of the program.
-	history    *history.History // The history of the program.
+	state      UiState          // The state is of type UiState, a struct we have defined above
+	dimensions UiDimensions     // UiDimensions is the struct defined above
+	components UiComponents     // This is of type UiComponents, a struct we have defined above
+	config     *config.Config   // Config struct in the config package has system config, user config etc.
+	engine     *ai.Engine       // Engine is actually a struct we have in the ai package of this project
+	history    *history.History // History is a struct in the history package of this project
 }
 
 // NewUi is a function that creates a new Ui instance.
 func NewUi(input *UiInput) *Ui {
 	// Create a new Ui instance with the input run mode and prompt mode, a new prompt, renderer, and spinner, and a new history.
+	//config and engine are not yet initialized
 	return &Ui{
 		state: UiState{
 			error:       nil,
@@ -83,9 +85,11 @@ func NewUi(input *UiInput) *Ui {
 			),
 			spinner: NewSpinner(),
 		},
-		history: history.NewHistory(),
+		history: history.NewHistory(), //calls the helper function NewHistory in the history package 
 	}
 }
+
+
 
 // Init initializes the UI and returns a tea.Cmd that represents the initial command to be executed.
 // It loads the configuration, handles any errors, and determines whether to start in REPL mode or CLI mode.
@@ -124,6 +128,7 @@ func (u *Ui) Init() tea.Cmd {
 	}
 }
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Update is a method of the Ui struct that handles updating the UI based on the received message.
 func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
@@ -153,10 +158,11 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Handle keyboard input
 	case tea.KeyMsg:
 		switch msg.Type {
+	//we are fixing the actions based on the key pressed by the user, like ctrlc, tab etc.
 		// Quit the program
 		case tea.KeyCtrlC:
 			return u, tea.Quit
-		// Navigate command history
+		// Navigate command history with up and down keys
 		case tea.KeyUp, tea.KeyDown:
 			if !u.state.querying && !u.state.confirming {
 				var input *string
@@ -194,7 +200,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					textinput.Blink,
 				)
 			}
-		// Process user input
+		// [User presses enter] Process user input
 		case tea.KeyEnter:
 			if u.state.configuring {
 				return u, u.finishConfig(u.components.prompt.GetValue())
@@ -226,7 +232,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					}
 				}
 			}
-		// Show help message
+		// [user presses ctrl + h] Show help message
 		case tea.KeyCtrlH:
 			if !u.state.configuring && !u.state.querying && !u.state.confirming {
 				u.components.prompt, promptCmd = u.components.prompt.Update(msg)
@@ -237,7 +243,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					textinput.Blink,
 				)
 			}
-		// Clear the screen
+		// [Ctrl + l] Clear the screen
 		case tea.KeyCtrlL:
 			if !u.state.querying && !u.state.confirming {
 				u.components.prompt, promptCmd = u.components.prompt.Update(msg)
@@ -248,7 +254,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					textinput.Blink,
 				)
 			}
-		// Reset the program
+		// [ctrl + R] Reset the program
 		case tea.KeyCtrlR:
 			if !u.state.querying && !u.state.confirming {
 				u.history.Reset()
@@ -262,7 +268,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					textinput.Blink,
 				)
 			}
-		// Edit settings
+		// [Ctrl + S] Edit settings
 		case tea.KeyCtrlS:
 			if !u.state.querying && !u.state.confirming && !u.state.configuring && !u.state.executing {
 				u.state.executing = true
@@ -273,7 +279,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmds = append(
 					cmds,
 					promptCmd,
-					u.editSettings(),
+					u.editSettings(), //calling the editSettings function defined below
 				)
 			}
 		default:
@@ -365,13 +371,15 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			return u, u.awaitChatStream()
 		}
-	// Handle runner feedback
+	// Handle runner feedback (success, fail feedback msg)
 	case run.RunOutput:
 		u.state.querying = false
 		u.components.prompt, promptCmd = u.components.prompt.Update(msg)
 		u.components.prompt.Focus()
+		//we get the success msg
 		output := u.components.renderer.RenderSuccess(fmt.Sprintf("\n%s\n", msg.GetSuccessMessage()))
 		if msg.HasError() {
+			//getting the error msg if there's an error
 			output = u.components.renderer.RenderError(fmt.Sprintf("\n%s\n", msg.GetErrorMessage()))
 		}
 		if u.state.runMode == CliMode {
@@ -398,11 +406,12 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View returns the string representation of the user interface.
 // It renders different views based on the state of the UI.
 func (u *Ui) View() string {
+	//renders error, content depending on the state of the UI
 	if u.state.error != nil {
 		// Render error message
 		return u.components.renderer.RenderError(fmt.Sprintf("[error] %s", u.state.error))
 	}
-
+//if you are in configuring state (defined in the struct Uistate on top), then we enter this condition
 	if u.state.configuring {
 		// Render configuration view
 		return fmt.Sprintf(
@@ -411,18 +420,19 @@ func (u *Ui) View() string {
 			u.components.prompt.View(),
 		)
 	}
-
+//querying, confirming, executing are UI states defined in the struct on top of this file
 	if !u.state.querying && !u.state.confirming && !u.state.executing {
 		// Render prompt view
 		return u.components.prompt.View()
 	}
 
 	if u.state.promptMode == ChatPromptMode {
+		// if we are in the promptMode state, we will render chat mode view
 		// Render chat mode view
 		return u.components.renderer.RenderContent(u.state.buffer)
 	} else {
 		if u.state.querying {
-			// Render spinner view
+			// Call spinner.View() function from spinner.go file
 			return u.components.spinner.View()
 		} else {
 			if !u.state.executing {

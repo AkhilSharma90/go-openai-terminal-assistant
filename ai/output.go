@@ -2,6 +2,9 @@ package ai
 
 //COMPLETE
 
+//the output from execution and chat stream both look different, they're the two modes of the engine
+//the exec output has it's own struct defined as EngineExecOutput and the chatStreamOutput has its
+//own struct defined below
 // EngineExecOutput represents the output of an AI engine execution.
 type EngineExecOutput struct {
 	Command     string `json:"cmd"`  // Command executed by the AI engine

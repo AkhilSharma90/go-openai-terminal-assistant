@@ -8,6 +8,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+//this entire file is for creating a prompt for the open ai api, there is no processing here
+//we are just formatting and showing the CLI related UI parts
+
 const (
 	exec_icon          = "🚀 > "
 	exec_placeholder   = "Execute something..."

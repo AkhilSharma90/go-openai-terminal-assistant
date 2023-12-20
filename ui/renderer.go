@@ -1,10 +1,12 @@
 package ui
 
+//COMPLETE
+
 import (
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
 )
-
+//definined different colors for different types of msgs
 // Colors used for rendering different types of content.
 const (
 	exec_color    = "#ffa657"
@@ -17,6 +19,8 @@ const (
 )
 
 // Renderer is a struct that represents a renderer for different types of content.
+//success, help, warning, error will all get their own different styles
+//they're all defined as Style struct that exists in the lipgloss library
 type Renderer struct {
 	contentRenderer *glamour.TermRenderer
 	successRenderer lipgloss.Style
@@ -26,6 +30,7 @@ type Renderer struct {
 }
 
 // NewRenderer is a function that creates a new Renderer instance.
+//returns an instance of Renderer struct defined above
 func NewRenderer(options ...glamour.TermRendererOption) *Renderer {
 	// Create a new terminal renderer with the provided options.
 	contentRenderer, err := glamour.NewTermRenderer(options...)
@@ -48,6 +53,7 @@ func NewRenderer(options ...glamour.TermRendererOption) *Renderer {
 	}
 }
 
+//five helper functions below to render different types of msgs defined in the renderer struct
 // RenderContent is a method on the Renderer struct that renders general content.
 func (r *Renderer) RenderContent(in string) string {
 	out, _ := r.contentRenderer.Render(in)
@@ -84,6 +90,7 @@ func (r *Renderer) RenderConfigMessage() string {
 	return welcome
 }
 
+//these are all the ways you can interact with the terminal ai assistant, displayed in help msg
 // RenderHelpMessage is a method on the Renderer struct that renders a help message.
 func (r *Renderer) RenderHelpMessage() string {
 	help := "**Help**\n"

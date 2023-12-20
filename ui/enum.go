@@ -1,8 +1,12 @@
 package ui
 
+//COMPLETE
+
+//defining a prompmode as an integer
 type PromptMode int
 
 // These are the constants representing different prompt modes.
+//four prompt modes defined here (exec, chat, config and default)
 const (
 	ExecPromptMode PromptMode = iota
 	ConfigPromptMode
@@ -11,6 +15,8 @@ const (
 )
 
 // String is a method on the PromptMode type that returns a string representation of the prompt mode.
+//this takes in the mode and returns it in string format, the modes are returned by the
+//function below GetPromptModelFromString
 func (m PromptMode) String() string {
 	switch m {
 	case ExecPromptMode:
@@ -50,6 +56,7 @@ const (
 )
 
 // String is a method on the RunMode type that returns a string representation of the run mode.
+//string method is invoked for a RunMode by writing m.String()
 func (m RunMode) String() string {
 	if m == CliMode {
 		return "cli"

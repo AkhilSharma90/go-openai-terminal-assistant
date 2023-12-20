@@ -6,7 +6,9 @@ import (
 	"strings"
 )
 
-// RunCommand executes a system command and returns its output and any error encountered
+//We can use open AI to generate commands but to actually run it, we need to use the exec.Command function
+//and that's essentially what we're calling here
+// RunCommand executes the command and returns the output from execution and any error encountered
 func RunCommand(cmd string, arg ...string) (string, error) {
 	// Execute the command and get the output
 	out, err := exec.Command(cmd, arg...).Output()
