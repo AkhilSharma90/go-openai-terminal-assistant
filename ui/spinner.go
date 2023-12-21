@@ -62,13 +62,16 @@ func (s *Spinner) View() string {
 	// Return a string representation of the spinner with the spinner view and the message.
 	return fmt.Sprintf(
 		"\n  %s %s...",
+		//the View function here is getting called from tea
 		s.spinner.View(),
+		//we add this view with the string message and return from here
 		s.spinner.Style.Render(s.message),
 	)
 }
 
 // Tick is a method on the Spinner struct that returns a tick message for the spinner model.
 func (s *Spinner) Tick() tea.Msg {
+	//Tick is also a function from tea, tells the spinner what to do in the next second
 	return s.spinner.Tick()
 }
 

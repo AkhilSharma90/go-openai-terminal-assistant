@@ -22,10 +22,12 @@ func (m PromptMode) String() string {
 	case ExecPromptMode:
 		return "exec"
 	case ConfigPromptMode:
+		//when we want to set config
 		return "config"
 	case ChatPromptMode:
 		return "chat"
 	default:
+		//whatever we set as the default in the config file
 		return "default"
 	}
 }
@@ -48,6 +50,9 @@ func GetPromptModeFromString(s string) PromptMode {
 type RunMode int
 
 // These are the constants representing different run modes.
+//when the user initiates the terminal tool, we are in CLI mode
+//and when we start interacting with the terminal when the user is asking if it wants us to
+//execute some command on our behalf or not, then it's in REPL mode
 const (
 	// CliMode is used when the run mode is command-line interface.
 	CliMode RunMode = iota

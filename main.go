@@ -14,7 +14,7 @@ func main() {
 	// Seed the random number generator with the current time
 	rand.Seed(time.Now().UnixNano())
 
-	// Create a new UI input
+	// Create a new UI input, this function is in input.go
 	input, err := ui.NewUIInput()
 	if err != nil {
 		log.Fatal(err)

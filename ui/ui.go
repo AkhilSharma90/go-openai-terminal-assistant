@@ -55,6 +55,7 @@ type Ui struct {
 	history    *history.History // History is a struct in the history package of this project
 }
 
+//this function gets called from main.go
 // NewUi is a function that creates a new Ui instance.
 func NewUi(input *UiInput) *Ui {
 	// Create a new Ui instance with the input run mode and prompt mode, a new prompt, renderer, and spinner, and a new history.
@@ -78,12 +79,12 @@ func NewUi(input *UiInput) *Ui {
 			150,
 		},
 		components: UiComponents{
-			prompt: NewPrompt(input.GetPromptMode()),
-			renderer: NewRenderer(
+			prompt: NewPrompt(input.GetPromptMode()), //this function is defined in prompt.go
+			renderer: NewRenderer( //render.go has this function
 				glamour.WithAutoStyle(),
 				glamour.WithWordWrap(150),
 			),
-			spinner: NewSpinner(),
+			spinner: NewSpinner(), //spinner.go has this func
 		},
 		history: history.NewHistory(), //calls the helper function NewHistory in the history package 
 	}
@@ -99,6 +100,8 @@ func (u *Ui) Init() tea.Cmd {
 	if err != nil {
 		// Handle the case when the configuration file is not found
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			//if the user hasn't provided the config file, we are setting our terminal into
+			//repl mode and accepting values
 			if u.state.runMode == ReplMode {
 				// If running in REPL mode, sequence the commands to clear the screen and start the configuration
 				return tea.Sequence(
@@ -111,6 +114,8 @@ func (u *Ui) Init() tea.Cmd {
 			}
 		} else {
 			// Handle other errors by printing the error message and quitting the program
+			//if user doesn't get config file and is also not able to accept config
+			//in repl or cli mode, we send error
 			return tea.Sequence(
 				tea.Println(u.components.renderer.RenderError(err.Error())),
 				tea.Quit,
@@ -540,6 +545,8 @@ func (u *Ui) startCli(config *config.Config) tea.Cmd {
 }
 
 // startConfig is a method of the Ui struct that starts the configuration mode.
+//when user has not provided the config file and we're placing the terminal into
+//REPL mode, we then call this function to accept config values from user while chatting
 func (u *Ui) startConfig() tea.Cmd {
 	return func() tea.Msg {
 		// Set the UI state
@@ -553,7 +560,8 @@ func (u *Ui) startConfig() tea.Cmd {
 		u.state.command = ""
 
 		// Initialize a new prompt with ConfigPromptMode
-		u.components.prompt = NewPrompt(ConfigPromptMode)
+		//call the newprompt function with configPromptMode
+		u.components.prompt = NewPrompt(ConfigPromptMode) // this function is in prompt.go
 
 		return nil
 	}
