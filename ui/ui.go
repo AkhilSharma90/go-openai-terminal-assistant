@@ -71,6 +71,7 @@ func NewUi(input *UiInput) *Ui {
 			executing:   false,
 			args:        input.GetArgs(),
 			pipe:        input.GetPipe(),
+			//buffer is the temporary storage, making it empty
 			buffer:      "",
 			command:     "",
 		},
@@ -144,6 +145,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	// Handle spinner tick message
+	//how fast the spinner and tick should move when a prompt is given
 	case spinner.TickMsg:
 		if u.state.querying {
 			u.components.spinner, spinnerCmd = u.components.spinner.Update(msg)
@@ -153,6 +155,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			)
 		}
 	// Handle window size message
+	//if a prompt is bigger etc. the window will stretch
 	case tea.WindowSizeMsg:
 		u.dimensions.width = msg.Width
 		u.dimensions.height = msg.Height
@@ -168,7 +171,10 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlC:
 			return u, tea.Quit
 		// Navigate command history with up and down keys
+		//every command is divided into categories like querying, confirming etc. 4 stages are there
 		case tea.KeyUp, tea.KeyDown:
+			//before going up and down and showing previous and next commands to user, we are just checking
+			//whether we are in querying or confirming mode
 			if !u.state.querying && !u.state.confirming {
 				var input *string
 				if msg.Type == tea.KeyUp {
@@ -550,6 +556,7 @@ func (u *Ui) startCli(config *config.Config) tea.Cmd {
 func (u *Ui) startConfig() tea.Cmd {
 	return func() tea.Msg {
 		// Set the UI state
+		//we are keeping only configuring as true, rest everything is false
 		u.state.configuring = true
 		u.state.querying = false
 		u.state.confirming = false
@@ -570,9 +577,11 @@ func (u *Ui) startConfig() tea.Cmd {
 // finishConfig is a method of the Ui struct that finishes the configuration process.
 func (u *Ui) finishConfig(key string) tea.Cmd {
 	// Update UI state
+	//setting configuring as false
 	u.state.configuring = false
 
 	// Write configuration to file
+	//some file is being created in background for config after taking configs from user
 	config, err := config.WriteConfig(key, true)
 	if err != nil {
 		u.state.error = err
