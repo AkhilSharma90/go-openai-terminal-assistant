@@ -145,7 +145,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	// Handle spinner tick message
-	//how fast the spinner and tick should move when a prompt is given
+	//sinner update function is called with the msg 
 	case spinner.TickMsg:
 		if u.state.querying {
 			u.components.spinner, spinnerCmd = u.components.spinner.Update(msg)
@@ -163,7 +163,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			glamour.WithAutoStyle(),
 			glamour.WithWordWrap(u.dimensions.width),
 		)
-	// Handle keyboard input
+	// Handle keyboard inputs of various kinds
 	case tea.KeyMsg:
 		switch msg.Type {
 	//we are fixing the actions based on the key pressed by the user, like ctrlc, tab etc.
@@ -212,6 +212,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				)
 			}
 		// [User presses enter] Process user input
+		//handles everything to do with user input after enter is pressed
 		case tea.KeyEnter:
 			if u.state.configuring {
 				return u, u.finishConfig(u.components.prompt.GetValue())
@@ -225,11 +226,13 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					u.components.prompt.Blur()
 					u.components.prompt, promptCmd = u.components.prompt.Update(msg)
 					if u.state.promptMode == ChatPromptMode {
+//creating sequence of commands to be executed
 						cmds = append(
 							cmds,
 							promptCmd,
 							tea.Println(inputPrint),
 							u.startChatStream(input),
+//if we are in chatpromptMode, then we will await the chat stream
 							u.awaitChatStream(),
 						)
 					} else {
@@ -238,6 +241,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							promptCmd,
 							tea.Println(inputPrint),
 							u.startExec(input),
+//not in chatPromptMode then just show sipnner ticking
 							u.components.spinner.Tick,
 						)
 					}
@@ -258,6 +262,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlL:
 			if !u.state.querying && !u.state.confirming {
 				u.components.prompt, promptCmd = u.components.prompt.Update(msg)
+				//order of commands to be executed, clears screen and blinks for text input
 				cmds = append(
 					cmds,
 					promptCmd,
@@ -268,10 +273,13 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// [ctrl + R] Reset the program
 		case tea.KeyCtrlR:
 			if !u.state.querying && !u.state.confirming {
+//difference between clear and reset is that we reset the history and engine
+//as well as set "" empty string for prompt
 				u.history.Reset()
 				u.engine.Reset()
 				u.components.prompt.SetValue("")
 				u.components.prompt, promptCmd = u.components.prompt.Update(msg)
+//command sequence same as clear screen
 				cmds = append(
 					cmds,
 					promptCmd,
@@ -290,10 +298,14 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmds = append(
 					cmds,
 					promptCmd,
+//this is where the logic is, calling edit settings function
 					u.editSettings(), //calling the editSettings function defined below
 				)
 			}
 		default:
+//in default case, doing a few checks and executing commands accordingly
+//for example where user entered "y" in the cli, meaning for yes
+//we checked for confirming state because this requires user to say y or n
 			if u.state.confirming {
 				if strings.ToLower(msg.String()) == "y" {
 					u.state.confirming = false
@@ -305,6 +317,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						u.execCommand(u.state.command),
 					)
 				} else {
+//where the user did not select "y", anything else					
 					u.state.confirming = false
 					u.state.executing = false
 					u.state.buffer = ""
@@ -336,10 +349,11 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					textinput.Blink,
 				)
 			}
-		}
-	// Handle AI engine execution output
+		} // this is where the key commands end, now entering other types of msgs
+	// Handle if the msg is AI engine execution output
 	case ai.EngineExecOutput:
 		var output string
+		//checking if the msg is executable
 		if msg.IsExecutable() {
 			u.state.confirming = true
 			u.state.command = msg.GetCommand()
@@ -347,6 +361,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			output += fmt.Sprintf("  %s\n\n  confirm execution? [y/N]", u.components.renderer.RenderHelp(msg.GetExplanation()))
 			u.components.prompt.Blur()
 		} else {
+			//if the msg isn't executable, get explanation for the msg
 			output = u.components.renderer.RenderContent(msg.GetExplanation())
 			u.components.prompt.Focus()
 			if u.state.runMode == CliMode {
@@ -364,6 +379,7 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		)
 	// Handle AI engine chat stream output
 	case ai.EngineChatStreamOutput:
+		//checking if this is the last message in the chatStreamOutput
 		if msg.IsLast() {
 			output := u.components.renderer.RenderContent(u.state.buffer)
 			u.state.buffer = ""
@@ -371,20 +387,24 @@ func (u *Ui) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if u.state.runMode == CliMode {
 				return u, tea.Sequence(
 					tea.Println(output),
+					//if we're in cli mode, we show the output and quit
 					tea.Quit,
 				)
 			} else {
 				return u, tea.Sequence(
 					tea.Println(output),
+			//if we're in repl, we show blinking text input meaning more interaction with user
 					textinput.Blink,
 				)
 			}
 		} else {
+			//if not the last message
 			return u, u.awaitChatStream()
 		}
 	// Handle runner feedback (success, fail feedback msg)
 	case run.RunOutput:
 		u.state.querying = false
+		//update the prompt and bringing it in focus for user to interact with it
 		u.components.prompt, promptCmd = u.components.prompt.Update(msg)
 		u.components.prompt.Focus()
 		//we get the success msg
